@@ -1,14 +1,39 @@
 import React, { useState, useEffect } from 'react';
+import { Route, Routes, Link, useLocation } from 'react-router-dom';
 import Auth from './components/Auth';
 import './App.css';
+
 import Main from './Routes/Main';
-import { Route, Routes, Link, useLocation } from 'react-router-dom';
+import Statistics from './Routes/Statistics';
+import Accounts from './Routes/Accounts';
 
 const App = () => {
   const [token, setToken] = useState(localStorage.getItem('token'));
   const [activeFlag, setActiveFlag] = useState(false);
   // const [login, setLogin] = useState(localStorage.getItem('login'));
   const location = useLocation(); // Получаем текущий путь
+
+  const [activeSettings, setActiveSettings] = useState(false);
+
+  const toggleMenu = (event) => {
+    event.stopPropagation(); // предотвращаем всплытие события
+    setActiveSettings(prev => !prev);
+  };
+
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      // Проверяем, что клик был вне меню
+      if (activeSettings && !event.target.closest('.menu_login')) {
+        setActiveSettings(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [activeSettings]);
+
 
   useEffect(() => {
     if (localStorage.getItem('token')) {
@@ -65,17 +90,22 @@ const App = () => {
             </Link>
           </ul>
 
-          <div className='menu_login'>
+          <div className='menu_login' onClick={toggleMenu}>
             <p>Artem</p>
             <span className='selector_icon' />
+          </div>
+
+          {/* <div className={activeSettings ? 'menu_login_exit_container active' : 'menu_login_exit_container'} onClick={e => e.stopPropagation()}> */}
+          <div>
+            <button className='settings_button'>Настройки</button>
             <button className='logout_button' onClick={logout}>Выйти</button>
           </div>
         </header>
           
         <Routes>
           <Route path='/' element={<Main />} />
-          <Route path='/statistics' element={<Main />} />
-          <Route path='/accounts' element={<Main />} />
+          <Route path='/statistics' element={<Statistics />} />
+          <Route path='/accounts' element={<Accounts />} />
         </Routes>
         
         <div className='flag_container'>

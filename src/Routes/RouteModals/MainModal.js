@@ -9,13 +9,18 @@ function MainModal({ active, setActive }) {
             <span className='cross_icon' onClick={() => setActive(false)} />
         </div>
         <h3>Создать запись</h3>
-        <input placeholder='Название' />
-        <input placeholder='Категория' />
-        <input placeholder='Дата' />
-        <input placeholder='Время' />
-        <input placeholder='Комментарий' />
+        <div className='create_message_container_input'>
 
-        <button id='create-new-message-button'>Создать запись</button>
+          <input placeholder='Название' />
+          <input placeholder='Категория' />
+          <input placeholder='Дата (год-месяц-день)' />
+          <input placeholder='Время' />
+          <input placeholder='Комментарий' />
+
+          <button id='create-new-message-button'>Создать запись</button>
+          
+        </div>
+
       </form>
     </div>
   );

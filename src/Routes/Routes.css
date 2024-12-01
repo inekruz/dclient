@@ -5,12 +5,43 @@
     height: 8px;
     transition: background-image .2s ease;
     margin-left: 4px;
-  }
+}
+
+.trash_icon {
+    background-image: url('../icons/trash.svg');
+    background-repeat: no-repeat;
+    background-position: center;
+    width: 20px;
+    height: 10px;
+    transition: background-color .2s ease;
+    padding: 5px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+.trash_icon:hover {
+    background-color: red;
+}
+
+.pen_icon {
+    background-image: url('../icons/pen.svg');
+    background-repeat: no-repeat;
+    background-position: center;
+    width: 20px;
+    height: 10px;
+    transition: background-color .2s ease;
+    padding: 5px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+.pen_icon:hover {
+    background-color: blue;
+}
 
 /* --------------------- */
 
 .app_main {
     text-align: right;
+    position: relative;
 }
 
 .app_main_header {
@@ -24,10 +55,19 @@
 
 .app_main_sub_header {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
+    flex-direction: column;
     width: 100%;
-    border-bottom: 1px solid #ffffff84;
+}
+
+.filters {
+    height: 0;
+    transform: scale(0);
+}
+.filters.active {
+    height: 20px;
+    transform: scale(1);
 }
 
 .sub_header_item {
@@ -37,6 +77,7 @@
     width: 85px;
     cursor: pointer;
     user-select: none;
+    margin: 20px 0;
 }
 .sub_header_item p {
     height: 20px;
@@ -61,17 +102,22 @@
 
 .history_list {
     margin-top: 30px;
+    overflow-y: auto;
+    max-height: 750px;
+    height: 630px;
+    padding: 0 20px;
+    width: 800px;
 }
 
 .history_list_item {
     width: 761px;
     height: 205px;
-    margin-top: 30px;
+    margin-top: 50px;
 }
 
 .history_list_item_main {
     background-color: #363636;
-    height: 116px;
+    height: 136px;
     border-radius: 10px;
     display: flex;
     align-items: center;
@@ -94,11 +140,18 @@
 .history_item_content p {
     font-size: 16px;
     color: #ffffff35;
+    width: 100%;
 }
 .history_item_content h3 {
     font-size: 28px;
     color: #FFF;
     margin-bottom: 6px;
+}
+.history_item_content div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 180px;
 }
 
 .history_list_item_comments {
@@ -134,9 +187,19 @@
     color: #15AB36;
 }
 
+.filters_menu {
+    position: absolute;
+    right: 0;
+    top: 100px;
+    text-align: center;
+    background-color: #2b2b2b;
+    padding: 30px 20px;
+    border-radius: 15px;
+}
+
 .create_new {
-    width: 60px;
-    height: 60px;
+    width: 40px;
+    height: 40px;
     background-color: #3A3A3A;
     border: none;
     border-radius: 8px;
@@ -148,6 +211,7 @@
     background-position: center;
     cursor: pointer;
     transition: background-color .2 ease;
+    margin-top: 30px;
 }
 .create_new:hover {
     background-color: #4e4e4e;
@@ -189,11 +253,23 @@
 #create-new-message {
     width: 400px;
     height: 600px;
-    background-color: #3A3A3A;
+    background-color: #2b2b2b;
     display: flex;
     flex-direction: column;
     text-align: center;
     margin-top: 100px;
+    transform: scale(0);
+    transition: transform .2s ease;
+    border-radius: 8px;
+    padding: 20px;
+}
+.main_modal.active #create-new-message {
+    transform: scale(1);
+    transition: transform .2s ease;
+}
+#create-new-message h3 {
+    color: #1F75FE;
+    margin-bottom: 80px;
 }
 
 input {
@@ -202,9 +278,33 @@ input {
 }
 
 #create-new-message-button {
-    width: 150px;
-    margin: 0 auto;
-    cursor: pointer;
+  width: 270px;
+  padding: 0 10px;
+  height: 40px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 80px;
+  transition: background-color .2s ease;
 }
+#create-new-message-button:hover {
+  background-color: #1F75FE;
+  transition: background-color .2s ease;
+}
+
+#create-new-message input {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    margin-top: 10px;
+    align-items: center;
+}
+#create-new-message input {
+    margin: 0 0 20px;
+    height: 30px;
+    width: 270px;
+    border-radius: 8px;
+}
+
 
 /* =============================== */

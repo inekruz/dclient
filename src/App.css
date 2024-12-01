@@ -30,6 +30,9 @@ a {
   width: 10px;
   height: 5px;
 }
+.selector_icon.active {
+  background-image: url('./icons/triangle\ 2.svg');
+}
 
 .icon_home {
   background-image: url('./icons/home_active.svg');
@@ -56,6 +59,7 @@ input {
 }
 
 .app_header {
+  position: relative;
   display: flex;
   justify-content: space-between;
 }
@@ -68,8 +72,7 @@ input {
   cursor: pointer;
   width: 256px;
   height: 46px;
-  border-right: 1px solid #000;
-  border-bottom: 1px solid #000;
+  border: 1px solid #000;
   padding: 16px;
   user-select: none;
 }
@@ -87,7 +90,10 @@ input {
 }
 .nav_list_item {
   transition: color .2s ease;
-  padding-bottom: 5px;
+  /* padding-bottom: 5px; */
+  height: 70px;
+  display: flex;
+  align-items: center;
 }
 .nav_list_item:hover {
   color: #1F75FE;
@@ -141,7 +147,7 @@ input {
   margin-bottom: 40px;
   color: #1F75FE;
 }
-.auth_container_input {
+.create_message_container_input {
   display: flex;
   flex-direction: column;
   text-align: center;
@@ -243,7 +249,32 @@ input {
   cursor: pointer;
   background-color: #363636;
   color: #FFF;
+  cursor: pointer;
+  background-color: red;
 }
 .logout_button:hover {
   background-color: #4e4e4e;
+}
+
+.menu_login_exit_container {
+  position: absolute;
+  right: 0;
+  top: 80px;
+  display: flex;
+  justify-content: space-between;
+  width: 256px;
+  padding: 16px;
+  height: 0;
+  transform: scale(0);
+  transition: transform .2s ease;
+  transition: height .2s ease;
+  background-color: #1b1b1b;
+  border: 1px solid #000;
+  border-radius: 5px;
+}
+.menu_login_exit_container.active {
+  height: 40px;
+  transform: scale(1);
+  transition: transform .2s ease;
+  transition: height .2s ease;
 }
