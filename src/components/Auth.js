@@ -2,15 +2,30 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import '../App.css';
 
+let globalUserId = null; // Глобальная переменная для хранения user_id
+
+export const getGlobalUserId = () => globalUserId; // Экспортируем функцию для доступа к user_id
+
 const Auth = ({ setToken }) => {
-  const [isLogin, setIsLogin] = useState(true); // Переключение между формой входа и регистрации
+  const [isLogin, setIsLogin] = useState(true);
   const [login, setLogin] = useState('');
   const [password, setPassword] = useState('');
-  const [activeFlag, setActiveFlag] = useState(false); // Для успешного флага
-  const [badFlag, setBadFlag] = useState(false); // Для флага с ошибкой
+  const [activeFlag, setActiveFlag] = useState(false);
+  const [badFlag, setBadFlag] = useState(false);
   const [message, setMessage] = useState('');
 
-  // Функция для обработки формы регистрации или входа
+  const fetchUserId = async (userLogin) => {
+    try {
+      const response = await axios.post('https://api.dvoich.ru/get-user-id', { login: userLogin });
+      const { user_id } = response.data;
+      globalUserId = user_id; // Сохраняем user_id в глобальной переменной
+      localStorage.setItem('user_id', user_id); // Сохраняем user_id в localStorage
+      console.log(`User ID: ${user_id}`);
+    } catch (error) {
+      console.error('Ошибка при получении user_id:', error);
+    }
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
 
@@ -20,31 +35,27 @@ const Auth = ({ setToken }) => {
     try {
       const response = await axios.post(url, data);
       if (isLogin) {
-        // Если вход успешен, сохраняем токен в localStorage
         localStorage.setItem('token', response.data.token);
-        localStorage.setItem('login', response.data.login);
-        setLogin(response.data.login);
-        setToken(response.data.token); // Передаем токен в родительский компонент
+        localStorage.setItem('login', login);
+        setToken(response.data.token);
+        await fetchUserId(login); // Получаем user_id
         setMessage('Успешный вход!');
-        setActiveFlag(true); // Показываем успешный флаг
-        setTimeout(() => {
-          setActiveFlag(false); // Скрываем флаг через 4 секунды
-        }, 4000);
       } else {
         localStorage.setItem('token', response.data.token);
-        setToken(response.data.token); // Передаем токен в родительский компонент
+        setToken(response.data.token);
+        await fetchUserId(login); // Получаем user_id
         setMessage('Пользователь успешно зарегистрирован!');
-        setActiveFlag(true); // Показываем успешный флаг
-        setTimeout(() => {
-          setActiveFlag(false); // Скрываем флаг через 4 секунды
-        }, 4000);
       }
+      setActiveFlag(true);
+      setTimeout(() => {
+        setActiveFlag(false);
+      }, 4000);
     } catch (error) {
       console.error(error);
       setMessage(error.response ? error.response.data.message : 'Ошибка сервера');
-      setBadFlag(true); // Показываем флаг с ошибкой
+      setBadFlag(true);
       setTimeout(() => {
-        setBadFlag(false); // Скрываем флаг через 4 секунды
+        setBadFlag(false);
       }, 4000);
     }
   };

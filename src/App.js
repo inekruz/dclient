@@ -23,7 +23,6 @@ const App = () => {
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      // Проверяем, что клик был вне меню
       if (activeSettings && !event.target.closest('.menu_login')) {
         setActiveSettings(false);
       }
