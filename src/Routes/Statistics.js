@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import './Routes.css';
 import { getGlobalUserId } from '../components/Auth';
@@ -9,7 +9,9 @@ const Statistics = () => {
   const [selectedSrok, setSelectedSrok] = useState('всё время'); // Выбранный срок
   const [transactions, setTransactions] = useState([]); // Транзакции
   const [errorMessage, setErrorMessage] = useState(''); // Сообщение об ошибке
+  const [loading, setLoading] = useState(false); // Статус загрузки
 
+  // Загрузка категорий
   useEffect(() => {
     const fetchCategories = async () => {
       const userId = getGlobalUserId();
@@ -29,12 +31,15 @@ const Statistics = () => {
     };
 
     fetchCategories();
-  }, []);
+  }, []); // Только при монтировании компонента
 
-  const fetchTransactions = async () => {
+  // Загрузка транзакций
+  const fetchTransactions = useCallback(async () => {
+    setLoading(true); // Начало загрузки
     const userId = getGlobalUserId();
     if (!userId) {
       setErrorMessage('Пользователь не авторизован.');
+      setLoading(false); // Завершение загрузки
       return;
     }
 
@@ -44,22 +49,24 @@ const Statistics = () => {
         category: selectedCategory,
         srok: selectedSrok,
       });
-
       setTransactions(response.data);
+      setErrorMessage(''); // Очистка ошибки
     } catch (error) {
       console.error('Ошибка при получении транзакций:', error);
       setErrorMessage('Ошибка при загрузке транзакций.');
     }
-  };
+    setLoading(false); // Завершение загрузки
+  }, [selectedCategory, selectedSrok]); // Зависимости от фильтров
 
   useEffect(() => {
     fetchTransactions(); // Загружаем данные при изменении фильтров
-  }, [selectedCategory, selectedSrok]);
+  }, [fetchTransactions]); // Массив зависимостей
 
   return (
     <div className="Statistics">
       <h2>Статистика</h2>
       {errorMessage && <p className="error">{errorMessage}</p>}
+
       {!errorMessage && (
         <>
           <div className="filters">
@@ -77,6 +84,7 @@ const Statistics = () => {
                 ))}
               </select>
             </div>
+
             <div className="filter">
               <label htmlFor="srok">Срок:</label>
               <select
@@ -94,7 +102,10 @@ const Statistics = () => {
 
           <div className="transactions">
             <h3>Транзакции</h3>
-            {transactions.length === 0 ? (
+
+            {loading && <p>Загрузка...</p>}
+
+            {transactions.length === 0 && !loading ? (
               <p>Данных нет</p>
             ) : (
               <ul>
