@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './Routes.css';
-import { getGlobalUserId } from './Auth';
+import { getGlobalUserId } from '../components/Auth';
 
 const Statistics = () => {
   const [categories, setCategories] = useState(['всё']); // Категории (по умолчанию "всё")
