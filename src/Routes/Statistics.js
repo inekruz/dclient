@@ -5,7 +5,7 @@ import { getGlobalUserId } from '../components/Auth';
 
 export default function Statistics() {
   const [categories, setCategories] = useState([]); // Список категорий
-  const [selectedCategory, setSelectedCategory] = useState(''); // Выбранная категория (ID)
+  const [selectedCategoryIndex, setSelectedCategoryIndex] = useState(null); // Индекс выбранной категории
   const [selectedPeriod, setSelectedPeriod] = useState(''); // Выбранный период
   const [transactions, setTransactions] = useState([]); // Список транзакций
   const [loading, setLoading] = useState(false); // Флаг загрузки
@@ -39,7 +39,8 @@ export default function Statistics() {
 
   // Обработчик изменения выбранной категории
   const handleCategoryChange = (e) => {
-    setSelectedCategory(e.target.value); // Всегда строка
+    const index = e.target.selectedIndex - 2; // -2 из-за "выберите категорию" и "всё"
+    setSelectedCategoryIndex(index >= 0 ? index : null);
   };
 
   // Обработчик изменения выбранного периода
@@ -50,7 +51,7 @@ export default function Statistics() {
   // Функция для получения статистики
   const fetchStatistics = async () => {
     const userId = getGlobalUserId();
-    if (!userId || !selectedCategory || !selectedPeriod) {
+    if (!userId || selectedCategoryIndex === null || !selectedPeriod) {
       setError('Пожалуйста, выберите категорию и период.');
       return;
     }
@@ -58,9 +59,10 @@ export default function Statistics() {
     setLoading(true);
     setError('');
     try {
+      const categoryId = selectedCategoryIndex === -1 ? null : categories[selectedCategoryIndex]?.category_id;
       const response = await axios.post('https://api.dvoich.ru/getTransactions', {
         user_id: userId,
-        category: selectedCategory === 'всё' ? null : parseInt(selectedCategory, 10), // Передаём ID категории
+        category: categoryId, // Передаём ID категории
         srok: selectedPeriod
       });
       setTransactions(response.data);
@@ -75,11 +77,11 @@ export default function Statistics() {
       <h2>Статистика</h2>
 
       <label htmlFor="category">Выберите категорию</label>
-      <select id="category" value={selectedCategory} onChange={handleCategoryChange}>
+      <select id="category" value={selectedCategoryIndex ?? ''} onChange={handleCategoryChange}>
         <option value="">--Выберите категорию--</option>
         <option value="всё">Всё</option>
-        {categories.map((category) => (
-          <option key={category.category_id} value={String(category.category_id)}>
+        {categories.map((category, index) => (
+          <option key={category.category_id} value={index}>
             {category.name}
           </option>
         ))}
