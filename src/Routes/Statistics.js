@@ -25,7 +25,10 @@ export default function Statistics() {
         const fetchedCategories = response.data.categories;
 
         if (Array.isArray(fetchedCategories)) {
-          setCategories(fetchedCategories); // Сохраняем категории
+          setCategories(fetchedCategories.map(category => ({
+            category_id: category.category_id,
+            name: category.name
+          }))); // Сохраняем категории
         } else {
           console.error('Некорректный формат данных категорий:', fetchedCategories);
         }
@@ -61,7 +64,7 @@ export default function Statistics() {
     try {
       const response = await axios.post('https://api.dvoich.ru/getTransactions', {
         user_id: userId,
-        category: parseInt(selectedCategory, 10), // Передаём ID категории
+        category: selectedCategory === 'всё' ? null : parseInt(selectedCategory, 10), // Передаём ID категории
         srok: selectedPeriod
       });
       setTransactions(response.data);
@@ -78,6 +81,7 @@ export default function Statistics() {
       <label htmlFor="category">Выберите категорию</label>
       <select id="category" value={selectedCategory} onChange={handleCategoryChange}>
         <option value="">--Выберите категорию--</option>
+        <option value="всё">Всё</option>
         {categories.map((category) => (
           <option key={category.category_id} value={category.category_id}>
             {category.name}
