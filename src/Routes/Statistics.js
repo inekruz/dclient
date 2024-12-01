@@ -14,7 +14,7 @@ export default function Statistics() {
   // Загрузка категорий при монтировании компонента
   useEffect(() => {
     const fetchCategories = async () => {
-      const userId = getGlobalUserId(); // Получаем user_id из Auth.js
+      const userId = getGlobalUserId();
       if (!userId) {
         console.error('User ID is not available');
         return;
@@ -25,10 +25,7 @@ export default function Statistics() {
         const fetchedCategories = response.data.categories;
 
         if (Array.isArray(fetchedCategories)) {
-          setCategories(fetchedCategories.map(category => ({
-            category_id: category.category_id,
-            name: category.name
-          }))); // Сохраняем категории
+          setCategories(fetchedCategories);
         } else {
           console.error('Некорректный формат данных категорий:', fetchedCategories);
         }
@@ -37,13 +34,12 @@ export default function Statistics() {
       }
     };
 
-    fetchCategories(); // Загружаем категории при открытии компонента
+    fetchCategories();
   }, []);
 
   // Обработчик изменения выбранной категории
   const handleCategoryChange = (e) => {
-    const categoryId = e.target.value;
-    setSelectedCategory(categoryId); // Сохраняем ID категории
+    setSelectedCategory(e.target.value); // Всегда строка
   };
 
   // Обработчик изменения выбранного периода
@@ -53,7 +49,7 @@ export default function Statistics() {
 
   // Функция для получения статистики
   const fetchStatistics = async () => {
-    const userId = getGlobalUserId(); // Получаем user_id из Auth.js
+    const userId = getGlobalUserId();
     if (!userId || !selectedCategory || !selectedPeriod) {
       setError('Пожалуйста, выберите категорию и период.');
       return;
@@ -83,7 +79,7 @@ export default function Statistics() {
         <option value="">--Выберите категорию--</option>
         <option value="всё">Всё</option>
         {categories.map((category) => (
-          <option key={category.category_id} value={category.category_id}>
+          <option key={category.category_id} value={String(category.category_id)}>
             {category.name}
           </option>
         ))}
