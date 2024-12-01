@@ -7,7 +7,7 @@ const App = () => {
   const [token, setToken] = useState(localStorage.getItem('token')); // Храним токен в state
   const [activeFlag, setActiveFlag] = useState(false); // Состояние для управления классом active
 
-  const [activeProfile, setActiveProfile] = useState(false);
+  // const [activeProfile, setActiveProfile] = useState(false);
 
   // Проверяем, если токен уже в localStorage, восстанавливаем его в state
   useEffect(() => {
@@ -45,7 +45,7 @@ const App = () => {
   } else {
     return (
       <div className="App">
-        <div className='menu_login' onClick={setActiveProfile}>
+        <div className='menu_login'>
           <p>maximloh@gmail.com</p>
           <span className='selector_icon' />
           <button className='logout_button' onClick={logout}>Выйти</button>
