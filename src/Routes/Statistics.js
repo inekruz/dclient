@@ -4,12 +4,12 @@ import './Routes.css';
 import { getGlobalUserId } from '../components/Auth';
 
 export default function Statistics() {
-  const [categories, setCategories] = useState([]);
-  const [transactions, setTransactions] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState('');
-  const [selectedPeriod, setSelectedPeriod] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [categories, setCategories] = useState([]); // Список категорий
+  const [selectedCategory, setSelectedCategory] = useState(null); // Выбранная категория (ID)
+  const [selectedPeriod, setSelectedPeriod] = useState(''); // Выбранный период
+  const [transactions, setTransactions] = useState([]); // Список транзакций
+  const [loading, setLoading] = useState(false); // Флаг загрузки
+  const [error, setError] = useState(''); // Сообщение об ошибке
 
   // Загрузка категорий при монтировании компонента
   useEffect(() => {
@@ -33,7 +33,8 @@ export default function Statistics() {
 
   // Обработчик изменения выбранной категории
   const handleCategoryChange = (e) => {
-    setSelectedCategory(e.target.value);
+    const categoryId = parseInt(e.target.value, 10); // Извлекаем ID категории
+    setSelectedCategory(categoryId);
   };
 
   // Обработчик изменения выбранного периода
@@ -44,7 +45,7 @@ export default function Statistics() {
   // Функция для получения статистики
   const fetchStatistics = async () => {
     const userId = getGlobalUserId(); // Получаем user_id из Auth.js
-    if (!userId || !selectedCategory || !selectedPeriod) {
+    if (!userId || selectedCategory === null || !selectedPeriod) {
       setError('Пожалуйста, выберите категорию и период.');
       return;
     }
@@ -54,7 +55,7 @@ export default function Statistics() {
     try {
       const response = await axios.post('https://api.dvoich.ru/getTransactions', {
         user_id: userId,
-        category: parseInt(selectedCategory), // Убедимся, что передаем INT
+        category: selectedCategory, // Передаём ID категории
         srok: selectedPeriod
       });
       setTransactions(response.data);
@@ -69,10 +70,10 @@ export default function Statistics() {
       <h2>Статистика</h2>
 
       <label htmlFor="category">Выберите категорию</label>
-      <select id="category" value={selectedCategory} onChange={handleCategoryChange}>
+      <select id="category" value={selectedCategory || ''} onChange={handleCategoryChange}>
         <option value="">--Выберите категорию--</option>
-        {categories.map((category, index) => (
-          <option key={index} value={category.category_id}> {/* Передаем category_id */}
+        {categories.map((category) => (
+          <option key={category.category_id} value={category.category_id}> {/* Передаём category_id */}
             {category.name}
           </option>
         ))}
