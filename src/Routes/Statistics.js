@@ -3,150 +3,115 @@ import axios from 'axios';
 import './Routes.css';
 import { getGlobalUserId } from '../components/Auth';
 
-export default function Statistics() {
-  const [categories, setCategories] = useState([]); // Список категорий
-  const [selectedCategoryIndex, setSelectedCategoryIndex] = useState(null); // Индекс выбранной категории
-  const [selectedPeriod, setSelectedPeriod] = useState(''); // Выбранный период
-  const [transactions, setTransactions] = useState([]); // Список транзакций
-  const [loading, setLoading] = useState(false); // Флаг загрузки
-  const [error, setError] = useState(''); // Сообщение об ошибке
+const Statistics = () => {
+  const [categories, setCategories] = useState(['всё']); // Категории (по умолчанию "всё")
+  const [selectedCategory, setSelectedCategory] = useState('всё'); // Выбранная категория
+  const [selectedSrok, setSelectedSrok] = useState('всё время'); // Выбранный срок
+  const [transactions, setTransactions] = useState([]); // Транзакции
+  const [errorMessage, setErrorMessage] = useState(''); // Сообщение об ошибке
 
-  // Загрузка категорий при монтировании компонента
   useEffect(() => {
     const fetchCategories = async () => {
       const userId = getGlobalUserId();
       if (!userId) {
-        console.error('User ID is not available');
+        setErrorMessage('Пользователь не авторизован.');
         return;
       }
 
       try {
         const response = await axios.post('https://api.dvoich.ru/get-categories', { user_id: userId });
-        const fetchedCategories = response.data.categories;
-
-        if (Array.isArray(fetchedCategories)) {
-          setCategories(fetchedCategories);
-        } else {
-          console.error('Некорректный формат данных категорий:', fetchedCategories);
-        }
+        const uniqueCategories = ['всё', ...new Set(response.data.categories.map(category => category.name))];
+        setCategories(uniqueCategories);
       } catch (error) {
         console.error('Ошибка при получении категорий:', error);
+        setErrorMessage('Ошибка при загрузке категорий.');
       }
     };
 
     fetchCategories();
   }, []);
 
-  // Обработчик изменения выбранной категории
-  const handleCategoryChange = (e) => {
-   const selectedIndex = e.target.selectedIndex; // Получаем текущий индекс
-   console.log('selectedIndex:', selectedIndex);
- 
-   const index = selectedIndex - 2; // Сдвиг из-за первых двух опций
-   console.log('calculatedIndex:', index);
- 
-   if (index >= 0 && index < categories.length) {
-     setSelectedCategoryIndex(index); // Устанавливаем индекс
-     console.log('Selected category index set to:', index);
-   } else {
-     setSelectedCategoryIndex(null);
-     console.log('Invalid index, set to null');
-   }
- };
- 
+  const fetchTransactions = async () => {
+    const userId = getGlobalUserId();
+    if (!userId) {
+      setErrorMessage('Пользователь не авторизован.');
+      return;
+    }
 
-  // Обработчик изменения выбранного периода
-  const handlePeriodChange = (e) => {
-    setSelectedPeriod(e.target.value);
+    try {
+      const response = await axios.post('https://api.dvoich.ru/getTransactions', {
+        user_id: userId,
+        category: selectedCategory,
+        srok: selectedSrok,
+      });
+
+      setTransactions(response.data);
+    } catch (error) {
+      console.error('Ошибка при получении транзакций:', error);
+      setErrorMessage('Ошибка при загрузке транзакций.');
+    }
   };
 
-  // Функция для получения статистики
-  const fetchStatistics = async () => {
-   const userId = getGlobalUserId();
-   if (!userId || (selectedCategoryIndex === null && selectedCategoryIndex !== -1) || !selectedPeriod) {
-     setError('Пожалуйста, выберите категорию и период.');
-     return;
-   }
- 
-   setLoading(true);
-   setError('');
-   try {
-     // Если выбран индекс "Всё", передаем null, иначе определяем category_id
-     const categoryId = selectedCategoryIndex === -1 ? null : categories[selectedCategoryIndex]?.category_id;
- 
-     if (categoryId === undefined) {
-       throw new Error('Ошибка в выборе категории');
-     }
- 
-     const response = await axios.post('https://api.dvoich.ru/getTransactions', {
-       user_id: userId,
-       category: categoryId,
-       srok: selectedPeriod,
-     });
-     setTransactions(response.data);
-   } catch (error) {
-     setError('Ошибка при получении статистики');
-     console.error('Ошибка:', error);
-   }
-   setLoading(false);
- };
- 
+  useEffect(() => {
+    fetchTransactions(); // Загружаем данные при изменении фильтров
+  }, [selectedCategory, selectedSrok]);
 
   return (
-    <div className="statistics-container">
+    <div className="Statistics">
       <h2>Статистика</h2>
+      {errorMessage && <p className="error">{errorMessage}</p>}
+      {!errorMessage && (
+        <>
+          <div className="filters">
+            <div className="filter">
+              <label htmlFor="categories">Категория:</label>
+              <select
+                id="categories"
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+              >
+                {categories.map((category, index) => (
+                  <option key={index} value={category}>
+                    {category}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="filter">
+              <label htmlFor="srok">Срок:</label>
+              <select
+                id="srok"
+                value={selectedSrok}
+                onChange={(e) => setSelectedSrok(e.target.value)}
+              >
+                <option value="всё время">Всё время</option>
+                <option value="месяц">Месяц</option>
+                <option value="три месяца">Три месяца</option>
+                <option value="год">Год</option>
+              </select>
+            </div>
+          </div>
 
-      <label htmlFor="category">Выберите категорию</label>
-      <select id="category" value={selectedCategoryIndex ?? ''} onChange={handleCategoryChange}>
-        <option value="">--Выберите категорию--</option>
-        <option value="всё">Всё</option>
-        {categories.map((category, index) => (
-          <option key={category.category_id} value={index}>
-            {category.name}
-          </option>
-        ))}
-      </select>
-
-      <label htmlFor="period">Выберите период</label>
-      <select id="period" value={selectedPeriod} onChange={handlePeriodChange}>
-        <option value="">--Выберите период--</option>
-        <option value="месяц">Месяц</option>
-        <option value="три месяца">Три месяца</option>
-        <option value="год">Год</option>
-        <option value="всё время">Всё время</option>
-      </select>
-
-      <button onClick={fetchStatistics} disabled={loading}>
-        {loading ? 'Загрузка...' : 'Получить статистику'}
-      </button>
-
-      {error && <p className="error">{error}</p>}
-
-      {transactions.length > 0 && (
-        <div className="transactions-list">
-          <h3>Транзакции:</h3>
-          <table>
-            <thead>
-              <tr>
-                <th>Категория</th>
-                <th>Сумма</th>
-                <th>Дата</th>
-                <th>Описание</th>
-              </tr>
-            </thead>
-            <tbody>
-              {transactions.map((transaction, index) => (
-                <tr key={index}>
-                  <td>{transaction.category_name || 'Неизвестно'}</td>
-                  <td>{transaction.amount}</td>
-                  <td>{new Date(transaction.date).toLocaleDateString()}</td>
-                  <td>{transaction.description}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+          <div className="transactions">
+            <h3>Транзакции</h3>
+            {transactions.length === 0 ? (
+              <p>Данных нет</p>
+            ) : (
+              <ul>
+                {transactions.map((transaction, index) => (
+                  <li key={index}>
+                    <strong>{transaction.category_name || 'Без категории'}</strong>: {transaction.amount} руб.
+                    <br />
+                    {transaction.description} ({new Date(transaction.date).toLocaleDateString()})
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </>
       )}
     </div>
   );
-}
+};
+
+export default Statistics;
