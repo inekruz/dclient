@@ -115,7 +115,7 @@ export default function Statistics() {
             <tbody>
               {transactions.map((transaction, index) => (
                 <tr key={index}>
-                  <td>{transaction.category_name}</td>
+                  <td>{transaction.category_name || 'Неизвестно'}</td>
                   <td>{transaction.amount}</td>
                   <td>{new Date(transaction.date).toLocaleDateString()}</td>
                   <td>{transaction.description}</td>
