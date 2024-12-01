@@ -1,0 +1,210 @@
+.filter_icon {
+    background-image: url('../icons/filter_triangle_disable.svg');
+    background-repeat: no-repeat;
+    width: 12px;
+    height: 8px;
+    transition: background-image .2s ease;
+    margin-left: 4px;
+  }
+
+/* --------------------- */
+
+.app_main {
+    text-align: right;
+}
+
+.app_main_header {
+  height: 46px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #000;
+  padding: 16px;
+}
+
+.app_main_sub_header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    border-bottom: 1px solid #ffffff84;
+}
+
+.sub_header_item {
+    display: flex;
+    align-items: center;
+    height: 56px;
+    width: 85px;
+    cursor: pointer;
+    user-select: none;
+}
+.sub_header_item p {
+    height: 20px;
+}
+.sub_header_item:hover {
+    color: #FFF;
+    transition: color .2s ease;
+}
+.sub_header_item:hover .filter_icon {
+    transition: background-image .2s ease;
+    background-image: url('../icons/filter_triangle.svg');
+}
+
+.app_main_content {
+    width: 764px;
+    /* height: 80vh; */
+    color: #FFF;
+    font-size: 32px;
+    margin: 23px auto;
+    padding-top: 23px;
+}
+
+.history_list {
+    margin-top: 30px;
+}
+
+.history_list_item {
+    width: 761px;
+    height: 205px;
+    margin-top: 30px;
+}
+
+.history_list_item_main {
+    background-color: #363636;
+    height: 116px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.history_list_item_comments {
+    height: 81px;
+    background-color: #363636b1;
+    width: 688px;
+    margin: 0 auto;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+.history_item_content {
+    padding: 8px 26px;
+    text-align: left;
+}
+.history_item_content p {
+    font-size: 16px;
+    color: #ffffff35;
+}
+.history_item_content h3 {
+    font-size: 28px;
+    color: #FFF;
+    margin-bottom: 6px;
+}
+
+.history_list_item_comments {
+    padding: 5px;
+    text-align: center;
+}
+
+.history_list_item_comments_header {
+    width: 100%;
+    text-align: left;
+}
+
+.history_list_item_comments p {
+    font-size: 16px;
+    color: #ffffff35;
+}
+
+.history_item_comment {
+    color: #FFF;
+}
+
+.total_container {
+    padding: 37px 35px 37px 0;
+}
+.ruble {
+    margin-left: 12px;
+}
+
+.total.plus {
+    color: #15AB36;
+}
+.ruble.plus {
+    color: #15AB36;
+}
+
+.create_new {
+    width: 60px;
+    height: 60px;
+    background-color: #3A3A3A;
+    border: none;
+    border-radius: 8px;
+    -webkit-box-shadow: 4px 4px 8px 0px rgba(34, 60, 80, 0.2);
+    -moz-box-shadow: 4px 4px 8px 0px rgba(34, 60, 80, 0.2);
+    box-shadow: 4px 4px 8px 0px rgba(34, 60, 80, 0.2);
+    background-image: url('../icons/plus.svg');
+    background-repeat: no-repeat;
+    background-position: center;
+    cursor: pointer;
+    transition: background-color .2 ease;
+}
+.create_new:hover {
+    background-color: #4e4e4e;
+    transition: background-color .2 ease;
+}
+
+/* =============================== */
+
+.cross_icon {
+    background-image: url('../icons/cross.svg');
+    background-repeat: no-repeat;
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+}
+.form_header {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.main_modal {
+    background-color: rgba(0, 0, 0, 0.6 );
+    width: 100vw;
+    height: 100ch;
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    /* align-items: center; */
+    /* flex-direction: column; */
+    justify-content: center;
+    transform: scale(0);
+}
+.main_modal.active {
+    transform: scale(1);
+}
+
+#create-new-message {
+    width: 400px;
+    height: 600px;
+    background-color: #3A3A3A;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    margin-top: 100px;
+}
+
+input {
+    width: 200px;
+    margin: 30px auto;  
+}
+
+#create-new-message-button {
+    width: 150px;
+    margin: 0 auto;
+    cursor: pointer;
+}
+
+/* =============================== */
