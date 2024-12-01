@@ -2,10 +2,9 @@ import React, { useState, useEffect } from 'react';
 import './Routes.css';
 import { getGlobalUserId } from '../components/Auth';
 import axios from 'axios';
-import { Line } from 'react-chartjs-2';  // Для графика
+import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
 
-// Регистрация необходимых компонентов для работы с chart.js
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 const Statistics = () => {
@@ -99,9 +98,17 @@ const Statistics = () => {
                 {
                     label: 'Сумма транзакций по месяцам',
                     data: data,
-                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderColor: '#4BC0C0',
                     backgroundColor: 'rgba(75, 192, 192, 0.2)',
                     fill: true,
+                    lineTension: 0.4, // плавные линии
+                    pointRadius: 5, // точек на линии
+                    pointBackgroundColor: '#4BC0C0',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2,
+                    borderWidth: 2,
+                    hoverBorderWidth: 3,
+                    hoverBackgroundColor: '#FFDD57',
                 },
             ],
         };
@@ -141,23 +148,25 @@ const Statistics = () => {
 
             {error && <p style={{ color: 'red' }}>{error}</p>}
 
-            {/* Отображаем транзакции */}
+            {/* Отображаем транзакции в виде карточек */}
             {transactions.length > 0 && (
-                <div>
+                <div className="transactions-list">
                     <h3>Транзакции:</h3>
-                    <ul>
+                    <div className="transactions-container">
                         {transactions.map((transaction, index) => (
-                            <li key={index}>
-                                {transaction.category_name}: {transaction.amount} ({transaction.date})
-                            </li>
+                            <div className="transaction-card" key={index}>
+                                <h4>{transaction.category_name}</h4>
+                                <p>Сумма: <span>{transaction.amount} ₽</span></p>
+                                <p>Дата: <span>{new Date(transaction.date).toLocaleDateString('ru-RU')}</span></p>
+                            </div>
                         ))}
-                    </ul>
+                    </div>
                 </div>
             )}
 
             {/* График */}
             {Object.keys(chartData).length > 0 && (
-                <div style={{ width: '600px', height: '400px' }}>
+                <div className="chart-container">
                     <Line data={chartData} />
                 </div>
             )}

@@ -314,6 +314,7 @@ input {
     margin: 0 auto;
     padding: 20px;
     font-family: Arial, sans-serif;
+    color: #333;
 }
 
 h1 {
@@ -356,27 +357,46 @@ button:disabled {
     cursor: not-allowed;
 }
 
-ul {
-    padding-left: 20px;
+.transactions-list {
+    margin-top: 30px;
 }
 
-li {
+.transactions-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.transaction-card {
+    background-color: #f9f9f9;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s;
+}
+
+.transaction-card:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.transaction-card h4 {
+    font-size: 18px;
+    margin-bottom: 10px;
+    color: #4CAF50;
+}
+
+.transaction-card p {
+    font-size: 16px;
     margin: 5px 0;
 }
 
-li span {
+.transaction-card span {
     font-weight: bold;
-}
-
-.error-message {
-    color: red;
-    font-size: 18px;
-    text-align: center;
-    margin-top: 20px;
+    color: #333;
 }
 
 .chart-container {
-    margin-top: 30px;
+    margin-top: 40px;
     text-align: center;
 }
 
