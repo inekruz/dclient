@@ -5,7 +5,7 @@ import { getGlobalUserId } from '../components/Auth';
 
 export default function Statistics() {
   const [categories, setCategories] = useState([]); // Список категорий
-  const [selectedCategory, setSelectedCategory] = useState(null); // Выбранная категория (ID)
+  const [selectedCategory, setSelectedCategory] = useState(''); // Выбранная категория (ID)
   const [selectedPeriod, setSelectedPeriod] = useState(''); // Выбранный период
   const [transactions, setTransactions] = useState([]); // Список транзакций
   const [loading, setLoading] = useState(false); // Флаг загрузки
@@ -22,7 +22,13 @@ export default function Statistics() {
 
       try {
         const response = await axios.post('https://api.dvoich.ru/get-categories', { user_id: userId });
-        setCategories(response.data.categories); // Сохраняем категории в state
+        const fetchedCategories = response.data.categories;
+
+        if (Array.isArray(fetchedCategories)) {
+          setCategories(fetchedCategories); // Сохраняем категории
+        } else {
+          console.error('Некорректный формат данных категорий:', fetchedCategories);
+        }
       } catch (error) {
         console.error('Ошибка при получении категорий:', error);
       }
@@ -33,8 +39,8 @@ export default function Statistics() {
 
   // Обработчик изменения выбранной категории
   const handleCategoryChange = (e) => {
-    const categoryId = parseInt(e.target.value, 10); // Извлекаем ID категории
-    setSelectedCategory(categoryId);
+    const categoryId = e.target.value;
+    setSelectedCategory(categoryId); // Сохраняем ID категории
   };
 
   // Обработчик изменения выбранного периода
@@ -45,7 +51,7 @@ export default function Statistics() {
   // Функция для получения статистики
   const fetchStatistics = async () => {
     const userId = getGlobalUserId(); // Получаем user_id из Auth.js
-    if (!userId || selectedCategory === null || !selectedPeriod) {
+    if (!userId || !selectedCategory || !selectedPeriod) {
       setError('Пожалуйста, выберите категорию и период.');
       return;
     }
@@ -55,7 +61,7 @@ export default function Statistics() {
     try {
       const response = await axios.post('https://api.dvoich.ru/getTransactions', {
         user_id: userId,
-        category: selectedCategory, // Передаём ID категории
+        category: parseInt(selectedCategory, 10), // Передаём ID категории
         srok: selectedPeriod
       });
       setTransactions(response.data);
@@ -70,10 +76,10 @@ export default function Statistics() {
       <h2>Статистика</h2>
 
       <label htmlFor="category">Выберите категорию</label>
-      <select id="category" value={selectedCategory || ''} onChange={handleCategoryChange}>
+      <select id="category" value={selectedCategory} onChange={handleCategoryChange}>
         <option value="">--Выберите категорию--</option>
         {categories.map((category) => (
-          <option key={category.category_id} value={category.category_id}> {/* Передаём category_id */}
+          <option key={category.category_id} value={category.category_id}>
             {category.name}
           </option>
         ))}
