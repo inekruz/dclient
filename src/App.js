@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Auth from './components/Auth';
+import './App.css';
 
 const App = () => {
   const [token, setToken] = useState(localStorage.getItem('token')); // Храним токен в state
@@ -17,7 +18,7 @@ const App = () => {
   };
 
   return (
-    <div>
+    <div className="container">
       {token ? (
         <div>
           <h1>Добро пожаловать!</h1>

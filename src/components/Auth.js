@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import '../App.css';
 
 const Auth = ({ setToken }) => {
   const [isLogin, setIsLogin] = useState(true); // Переключение между формой входа и регистрации
@@ -31,7 +32,7 @@ const Auth = ({ setToken }) => {
   };
 
   return (
-    <div>
+    <div className="container">
       <h2>{isLogin ? 'Вход' : 'Регистрация'}</h2>
       <form onSubmit={handleSubmit}>
         <div>
@@ -55,9 +56,12 @@ const Auth = ({ setToken }) => {
         <button type="submit">{isLogin ? 'Войти' : 'Зарегистрироваться'}</button>
       </form>
       <p>{message}</p>
-      <button onClick={() => setIsLogin(!isLogin)}>
-        {isLogin ? 'Не зарегистрированы? Зарегистрируйтесь' : 'Есть аккаунт? Войдите'}
-      </button>
+      <div className="auth-container">
+        <p>{isLogin ? 'Нет аккаунта?' : 'Есть аккаунт?'}</p>
+        <button onClick={() => setIsLogin(!isLogin)}>
+          {isLogin ? 'Зарегистрироваться' : 'Войти'}
+        </button>
+      </div>
     </div>
   );
 };
