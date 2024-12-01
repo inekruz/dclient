@@ -72,8 +72,8 @@ export default function Statistics() {
       <select id="category" value={selectedCategory} onChange={handleCategoryChange}>
         <option value="">--Выберите категорию--</option>
         {categories.map((category, index) => (
-          <option key={index} value={category.name}>
-            {category.name}
+          <option key={index} value={category.category_id}>
+            {category.name} {/* Отображаем имя категории, но отправляем её ID */}
           </option>
         ))}
       </select>
