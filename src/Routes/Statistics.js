@@ -4,14 +4,13 @@ import './Routes.css';
 import { getGlobalUserId } from '../components/Auth';
 
 const Statistics = () => {
-  const [categories, setCategories] = useState(['всё']); // Категории (по умолчанию "всё")
-  const [selectedCategory, setSelectedCategory] = useState('всё'); // Выбранная категория
-  const [selectedSrok, setSelectedSrok] = useState('всё время'); // Выбранный срок
-  const [transactions, setTransactions] = useState([]); // Транзакции
-  const [errorMessage, setErrorMessage] = useState(''); // Сообщение об ошибке
-  const [loading, setLoading] = useState(false); // Статус загрузки
+  const [categories, setCategories] = useState(['всё']);
+  const [selectedCategory, setSelectedCategory] = useState('всё');
+  const [selectedSrok, setSelectedSrok] = useState('всё время');
+  const [transactions, setTransactions] = useState([]);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  // Загрузка категорий
   useEffect(() => {
     const fetchCategories = async () => {
       const userId = getGlobalUserId();
@@ -31,15 +30,14 @@ const Statistics = () => {
     };
 
     fetchCategories();
-  }, []); // Только при монтировании компонента
+  }, []);
 
-  // Загрузка транзакций
   const fetchTransactions = useCallback(async () => {
-    setLoading(true); // Начало загрузки
+    setLoading(true);
     const userId = getGlobalUserId();
     if (!userId) {
       setErrorMessage('Пользователь не авторизован.');
-      setLoading(false); // Завершение загрузки
+      setLoading(false);
       return;
     }
 
@@ -50,17 +48,21 @@ const Statistics = () => {
         srok: selectedSrok,
       });
       setTransactions(response.data);
-      setErrorMessage(''); // Очистка ошибки
+      setErrorMessage('');
     } catch (error) {
       console.error('Ошибка при получении транзакций:', error);
       setErrorMessage('Ошибка при загрузке транзакций.');
     }
-    setLoading(false); // Завершение загрузки
-  }, [selectedCategory, selectedSrok]); // Зависимости от фильтров
+    setLoading(false);
+  }, [selectedCategory, selectedSrok]);
 
   useEffect(() => {
-    fetchTransactions(); // Загружаем данные при изменении фильтров
-  }, [fetchTransactions]); // Массив зависимостей
+    fetchTransactions();
+  }, [fetchTransactions]);
+
+  const formatAmount = (amount) => {
+    return new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB' }).format(amount);
+  };
 
   return (
     <div className="Statistics">
@@ -111,7 +113,7 @@ const Statistics = () => {
               <ul>
                 {transactions.map((transaction, index) => (
                   <li key={index}>
-                    <strong>{transaction.category_name || 'Без категории'}</strong>: {transaction.amount} руб.
+                    <strong>{transaction.category_name || 'Без категории'}</strong>: {formatAmount(transaction.amount)}
                     <br />
                     {transaction.description} ({new Date(transaction.date).toLocaleDateString()})
                   </li>
