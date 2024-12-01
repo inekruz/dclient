@@ -1,15 +1,15 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './Routes.css';
 import { getGlobalUserId } from '../components/Auth';
 
 const Statistics = () => {
-  const [categories, setCategories] = useState(['всё']);
-  const [selectedCategory, setSelectedCategory] = useState('всё');
-  const [selectedSrok, setSelectedSrok] = useState('всё время');
-  const [transactions, setTransactions] = useState([]);
-  const [errorMessage, setErrorMessage] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [categories, setCategories] = useState([]); // Список категорий
+  const [selectedCategory, setSelectedCategory] = useState(''); // Выбранная категория
+  const [selectedSrok, setSelectedSrok] = useState('всё время'); // Выбранный срок
+  const [transactions, setTransactions] = useState([]); // Транзакции
+  const [errorMessage, setErrorMessage] = useState(''); // Сообщение об ошибке
+  const [loading, setLoading] = useState(false); // Статус загрузки
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -21,8 +21,8 @@ const Statistics = () => {
 
       try {
         const response = await axios.post('https://api.dvoich.ru/get-categories', { user_id: userId });
-        const uniqueCategories = ['всё', ...new Set(response.data.categories.map(category => category.name))];
-        setCategories(uniqueCategories);
+        setCategories(response.data.categories);
+        setSelectedCategory(response.data.categories.length > 0 ? response.data.categories[0].name : ''); // Установить первую категорию по умолчанию
       } catch (error) {
         console.error('Ошибка при получении категорий:', error);
         setErrorMessage('Ошибка при загрузке категорий.');
@@ -32,7 +32,7 @@ const Statistics = () => {
     fetchCategories();
   }, []);
 
-  const fetchTransactions = useCallback(async () => {
+  const fetchTransactions = async () => {
     setLoading(true);
     const userId = getGlobalUserId();
     if (!userId) {
@@ -54,11 +54,7 @@ const Statistics = () => {
       setErrorMessage('Ошибка при загрузке транзакций.');
     }
     setLoading(false);
-  }, [selectedCategory, selectedSrok]);
-
-  useEffect(() => {
-    fetchTransactions();
-  }, [fetchTransactions]);
+  };
 
   const formatAmount = (amount) => {
     return new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB' }).format(amount);
@@ -80,8 +76,8 @@ const Statistics = () => {
                 onChange={(e) => setSelectedCategory(e.target.value)}
               >
                 {categories.map((category, index) => (
-                  <option key={index} value={category}>
-                    {category}
+                  <option key={index} value={category.name}>
+                    {category.name}
                   </option>
                 ))}
               </select>
@@ -101,6 +97,8 @@ const Statistics = () => {
               </select>
             </div>
           </div>
+
+          <button onClick={fetchTransactions}>Получить статистику</button>
 
           <div className="transactions">
             <h3>Транзакции</h3>
