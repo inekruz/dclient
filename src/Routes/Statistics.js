@@ -39,9 +39,21 @@ export default function Statistics() {
 
   // Обработчик изменения выбранной категории
   const handleCategoryChange = (e) => {
-    const index = e.target.selectedIndex - 2; // -2 из-за "выберите категорию" и "всё"
-    setSelectedCategoryIndex(index >= 0 ? index : null);
-  };
+   const selectedIndex = e.target.selectedIndex; // Получаем текущий индекс
+   console.log('selectedIndex:', selectedIndex);
+ 
+   const index = selectedIndex - 2; // Сдвиг из-за первых двух опций
+   console.log('calculatedIndex:', index);
+ 
+   if (index >= 0 && index < categories.length) {
+     setSelectedCategoryIndex(index); // Устанавливаем индекс
+     console.log('Selected category index set to:', index);
+   } else {
+     setSelectedCategoryIndex(null);
+     console.log('Invalid index, set to null');
+   }
+ };
+ 
 
   // Обработчик изменения выбранного периода
   const handlePeriodChange = (e) => {
@@ -50,27 +62,35 @@ export default function Statistics() {
 
   // Функция для получения статистики
   const fetchStatistics = async () => {
-    const userId = getGlobalUserId();
-    if (!userId || selectedCategoryIndex === null || !selectedPeriod) {
-      setError('Пожалуйста, выберите категорию и период.');
-      return;
-    }
-
-    setLoading(true);
-    setError('');
-    try {
-      const categoryId = selectedCategoryIndex === -1 ? null : categories[selectedCategoryIndex]?.category_id;
-      const response = await axios.post('https://api.dvoich.ru/getTransactions', {
-        user_id: userId,
-        category: categoryId, // Передаём ID категории
-        srok: selectedPeriod
-      });
-      setTransactions(response.data);
-    } catch (error) {
-      setError('Ошибка при получении статистики');
-    }
-    setLoading(false);
-  };
+   const userId = getGlobalUserId();
+   if (!userId || (selectedCategoryIndex === null && selectedCategoryIndex !== -1) || !selectedPeriod) {
+     setError('Пожалуйста, выберите категорию и период.');
+     return;
+   }
+ 
+   setLoading(true);
+   setError('');
+   try {
+     // Если выбран индекс "Всё", передаем null, иначе определяем category_id
+     const categoryId = selectedCategoryIndex === -1 ? null : categories[selectedCategoryIndex]?.category_id;
+ 
+     if (categoryId === undefined) {
+       throw new Error('Ошибка в выборе категории');
+     }
+ 
+     const response = await axios.post('https://api.dvoich.ru/getTransactions', {
+       user_id: userId,
+       category: categoryId,
+       srok: selectedPeriod,
+     });
+     setTransactions(response.data);
+   } catch (error) {
+     setError('Ошибка при получении статистики');
+     console.error('Ошибка:', error);
+   }
+   setLoading(false);
+ };
+ 
 
   return (
     <div className="statistics-container">
