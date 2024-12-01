@@ -7,7 +7,7 @@ import { Route, Routes, Link, useLocation } from 'react-router-dom';
 const App = () => {
   const [token, setToken] = useState(localStorage.getItem('token'));
   const [activeFlag, setActiveFlag] = useState(false);
-  const [login, setLogin] = useState(localStorage.getItem('login'));
+  // const [login, setLogin] = useState(localStorage.getItem('login'));
   const location = useLocation(); // Получаем текущий путь
 
   useEffect(() => {
@@ -37,7 +37,7 @@ const App = () => {
     return (
       <div className='authorisation'>
         <div>
-          <Auth setToken={setToken} setLogin={setLogin} />
+          <Auth setToken={setToken} />
         </div>
       </div>
     );
