@@ -22,6 +22,8 @@ const Auth = ({ setToken }) => {
       if (isLogin) {
         // Если вход успешен, сохраняем токен в localStorage
         localStorage.setItem('token', response.data.token);
+        localStorage.setItem('login', response.data.login);
+        setLogin(response.data.login);
         setToken(response.data.token); // Передаем токен в родительский компонент
         setMessage('Успешный вход!');
         setActiveFlag(true); // Показываем успешный флаг
@@ -29,6 +31,8 @@ const Auth = ({ setToken }) => {
           setActiveFlag(false); // Скрываем флаг через 4 секунды
         }, 4000);
       } else {
+        localStorage.setItem('token', response.data.token);
+        setToken(response.data.token); // Передаем токен в родительский компонент
         setMessage('Пользователь успешно зарегистрирован!');
         setActiveFlag(true); // Показываем успешный флаг
         setTimeout(() => {

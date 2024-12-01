@@ -55,13 +55,18 @@ input {
   border-right: 1px solid #000;
 }
 
+.app_header {
+  display: flex;
+  justify-content: space-between;
+}
+
 .menu_login {
   text-align: center;
   display: flex;
   justify-content: space-between;
   align-items: center;
   cursor: pointer;
-  width: 250px;
+  width: 256px;
   height: 46px;
   border-right: 1px solid #000;
   border-bottom: 1px solid #000;
@@ -74,7 +79,24 @@ input {
   background-color: #1b1b1b;
 }
 
-.manu_nav {}
+.nav_list {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 500px;
+}
+.nav_list_item {
+  transition: color .2s ease;
+  padding-bottom: 5px;
+}
+.nav_list_item:hover {
+  color: #1F75FE;
+  transition: color .2s ease;
+}
+.nav_list_item.active {
+  border-bottom: 2px solid #1F75FE;
+  color: #1F75FE;
+}
 
 .manu_nav_item {
   width: 256px;
@@ -105,30 +127,48 @@ input {
 .auth_container {
   display: flex;
   flex-direction: column;
+  justify-content: center;
   text-align: center;
 
-  border: 1px solid #fff;
+  border: 1px solid #1F75FE;
   padding: 20px;
-  border-radius: 8px;
+  border-radius: 15px;
+
+  width: 460px;
+  height: 620px;
+}
+.auth_container h2 {
+  margin-bottom: 40px;
+  color: #1F75FE;
 }
 .auth_container_input {
   display: flex;
   flex-direction: column;
-  text-align: left;
+  text-align: center;
   margin-top: 10px;
+  align-items: center;
 }
 .auth_container_input input {
-  margin: 0 0 50px;
+  margin: 0 0 20px;
   height: 30px;
+  width: 270px;
+  border-radius: 8px;
 }
 .auth_login_button {
-  /* width: 60px; */
+  width: 270px;
   padding: 0 10px;
-  height: 20px;
+  height: 40px;
   border: none;
   border-radius: 8px;
   cursor: pointer;
+  margin-top: 80px;
+  transition: background-color .2s ease;
 }
+.auth_login_button:hover {
+  background-color: #1F75FE;
+  transition: background-color .2s ease;
+}
+
 .change_form_to_login {
   background-color: transparent;
   border: none;
@@ -137,11 +177,13 @@ input {
   cursor: pointer;
   margin-left: 4px;
 }
+
 .auth-container {
   display: flex;
   font-size: 11px;
   align-items: center;
   margin-top: 20px;
+  justify-content: center;
 }
 .bad_flag {
   width: 200px;

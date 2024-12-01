@@ -49,7 +49,7 @@ function Main() {
               <div className='history_list_item_comments_header'>
                 <p className='history_item_title'>Коментарий</p>
               </div>
-              <span className='history_item_comment'>Ебать поел</span>
+              <span className='history_item_comment'>Больше столько не заказывать</span>
             </div>
           </li>
 
