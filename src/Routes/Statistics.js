@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import './Routes.css';
 import { getGlobalUserId } from '../components/Auth'; // Импортируем функцию для получения глобального user_id
+import axios from 'axios'; // Импортируем axios для отправки запросов
 
 const Statistics = () => {
     const [categories, setCategories] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [selectedPeriod, setSelectedPeriod] = useState('all_time');
+    const [transactions, setTransactions] = useState([]);
+    const [error, setError] = useState('');
 
     const periods = [
         { label: 'Месяц', value: 'month' },
@@ -41,14 +44,28 @@ const Statistics = () => {
         fetchCategories();
     }, [userId]);
 
-    // Обработчик кнопки "Получить статистику"
-    const handleGetStatistics = () => {
+    // Функция для получения статистики с сервера
+    const handleGetStatistics = async () => {
         if (selectedCategory === null) {
-            console.error('Категория не выбрана!');
+            setError('Категория не выбрана!');
             return;
         }
-        console.log(`Выбранная категория ID: ${categories[selectedCategory].id}`);
-        console.log(`Выбранный период: ${selectedPeriod}`);
+
+        try {
+            // Отправляем запрос на сервер
+            const response = await axios.post('https://api.dvoich.ru/getTransactions', {
+                user_id: userId,
+                category: categories[selectedCategory].id,
+                srok: selectedPeriod,
+            });
+
+            // Обрабатываем данные транзакций
+            setTransactions(response.data);
+            setError('');
+        } catch (err) {
+            console.error('Ошибка при получении статистики:', err);
+            setError('Ошибка при получении статистики');
+        }
     };
 
     return (
@@ -82,6 +99,22 @@ const Statistics = () => {
                 </select>
             </div>
             <button onClick={handleGetStatistics}>Получить статистику</button>
+
+            {error && <p style={{ color: 'red' }}>{error}</p>}
+
+            {/* Отображаем транзакции */}
+            {transactions.length > 0 && (
+                <div>
+                    <h3>Транзакции:</h3>
+                    <ul>
+                        {transactions.map((transaction, index) => (
+                            <li key={index}>
+                                {transaction.category_name}: {transaction.amount} ({transaction.date})
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )}
         </div>
     );
 };
