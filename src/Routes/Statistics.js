@@ -54,7 +54,7 @@ export default function Statistics() {
     try {
       const response = await axios.post('https://api.dvoich.ru/getTransactions', {
         user_id: userId,
-        category: selectedCategory,
+        category: parseInt(selectedCategory), // Убедимся, что передаем INT
         srok: selectedPeriod
       });
       setTransactions(response.data);
@@ -72,8 +72,8 @@ export default function Statistics() {
       <select id="category" value={selectedCategory} onChange={handleCategoryChange}>
         <option value="">--Выберите категорию--</option>
         {categories.map((category, index) => (
-          <option key={index} value={category.category_id}>
-            {category.name} {/* Отображаем имя категории, но отправляем её ID */}
+          <option key={index} value={category.category_id}> {/* Передаем category_id */}
+            {category.name}
           </option>
         ))}
       </select>
