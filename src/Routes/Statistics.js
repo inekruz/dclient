@@ -5,7 +5,7 @@ import axios from 'axios'; // Импортируем axios для отправк
 
 const Statistics = () => {
     const [categories, setCategories] = useState([]);
-    const [selectedCategory, setSelectedCategory] = useState(null);
+    const [selectedCategory, setSelectedCategory] = useState('всё'); // Устанавливаем 'всё' как значение по умолчанию
     const [selectedPeriod, setSelectedPeriod] = useState('all_time');
     const [transactions, setTransactions] = useState([]);
     const [error, setError] = useState('');
@@ -46,16 +46,19 @@ const Statistics = () => {
 
     // Функция для получения статистики с сервера
     const handleGetStatistics = async () => {
-        if (selectedCategory === null) {
+        if (selectedCategory === null || selectedCategory === '') {
             setError('Категория не выбрана!');
             return;
         }
 
         try {
+            // Если категория не выбрана, передаем 'всё'
+            const categoryId = selectedCategory === 'всё' ? 'всё' : categories[selectedCategory].id;
+
             // Отправляем запрос на сервер
             const response = await axios.post('https://api.dvoich.ru/getTransactions', {
                 user_id: userId,
-                category: categories[selectedCategory].id,
+                category: categoryId,
                 srok: selectedPeriod,
             });
 
@@ -75,9 +78,9 @@ const Statistics = () => {
                 <label>Категория:</label>
                 <select
                     value={selectedCategory}
-                    onChange={(e) => setSelectedCategory(Number(e.target.value))}
+                    onChange={(e) => setSelectedCategory(e.target.value)} // Меняем логику изменения категории
                 >
-                    <option value={null}>Выберите категорию</option>
+                    <option value="всё">Все категории</option>
                     {categories.map((category, index) => (
                         <option key={category.id} value={index}>
                             {category.name}
